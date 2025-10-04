@@ -1,0 +1,29 @@
+{
+    "name": "gbtux/inertia-bundle",
+    "description": "Inertia Bundle with Vite for Symfony > 7",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "version": "0.0.1",
+    "autoload": {
+        "psr-4": {
+            "Gbtux\\InertiaBundle\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Guillaume Bordes",
+            "email": "gu.bordes@gmail.com"
+        }
+    ],
+    "require": {
+        "php":">=8.4",
+        "symfony/http-kernel": "^7.3",
+        "pentatrion/vite-bundle": "^8.2",
+        "symfony/console": "^7.3",
+        "symfony/serializer-pack": "^1.3",
+        "symfony/dependency-injection": "^7.3",
+        "symfony/process": "^7.3",
+        "symfony/form": "^7.3",
+        "friendsofsymfony/jsrouting-bundle": "^3.5"
+    }
+}

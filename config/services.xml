@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="gbtux_inertia.routing_history.previous_url_session_key">_gbtux_inertia_routing_previous_url</parameter>
+    </parameters>
+
+    <services>
+        <defaults public="false" />
+        <service id="gbtux_inertia.command.install" class="Gbtux\InertiaBundle\Command\InertiaInstallCommand">
+            <argument type="service" id="filesystem" />
+            <argument>%kernel.project_dir%</argument>
+            <tag name="console.command" />
+        </service>
+
+        <service id="gbtux_inertia.inertia" class="Gbtux\InertiaBundle\Service\Inertia">
+            <argument key="$engine" type="service" id="twig" />
+            <argument key="$requestStack" type="service" id="request_stack" />
+            <argument key="$container" type="service" id="service_container" />
+            <argument key="$serializer" type="service" id="serializer" />
+            <!--<call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call> -->
+        </service>
+        <service id="Gbtux\InertiaBundle\Service\InertiaInterface" alias="gbtux_inertia.inertia" />
+
+
+        <service id="gbtux_inertia.inertia_listener" class="Gbtux\InertiaBundle\EventListener\InertiaListener"
+                 public="false">
+            <argument key="$inertia" type="service" id="gbtux_inertia.inertia" />
+            <argument key="$debug">%kernel.debug%</argument>
+
+            <tag name="kernel.event_listener" event="kernel.request" />
+            <tag name="kernel.event_listener" event="kernel.response" />
+        </service>
+
+        <service id="gbtux_inertia.abstract_controller" class="Gbtux\InertiaBundle\Controller\AbstractController" public="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container" />
+            </call>
+            <tag name="container.service_subscriber"/>
+        </service>
+
+        <service id="gbtux_inertia.inertia_subscriber" class="Gbtux\InertiaBundle\EventListener\InertiaSubscriber">
+            <argument type="service" id="gbtux_inertia.inertia" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="gbtux_inertia.store_previous_url_in_session_subscriber" class="Gbtux\InertiaBundle\EventListener\StorePreviousUrlInSessionSubscriber">
+            <argument>%gbtux_inertia.routing_history.previous_url_session_key%</argument>
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="gbtux_inertia.exception_handler_subscriber" class="Gbtux\InertiaBundle\EventListener\ExceptionHandlerSubscriber">
+            <argument type="service" id="gbtux_inertia.service.routing_history" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="gbtux_inertia.check_form_validation_state_subscriber" class="Gbtux\InertiaBundle\EventListener\Form\CheckFormValidationStateSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Gbtux\InertiaBundle\EventListener\Form\CheckFormValidationStateSubscriber"
+                 alias="gbtux_inertia.check_form_validation_state_subscriber"
+        />
+
+        <service id="gbtux_inertia.service.routing_history" class="Gbtux\InertiaBundle\Service\RoutingHistory">
+            <argument type="service" id="request_stack" />
+            <argument>%gbtux_inertia.routing_history.previous_url_session_key%</argument>
+        </service>
+
+        <service id="Gbtux\InertiaBundle\Contract\RoutingHistoryInterface"
+                 alias="gbtux_inertia.service.routing_history"
+        />
+
+        <service id="gbtux_inertia.service.bundle_detector" class="Gbtux\InertiaBundle\Service\BundleDetector">
+            <argument type="service" id="filesystem" />
+            <argument>%kernel.project_dir%</argument>
+            <argument>%gbtux_inertia.ssr.bundle%</argument>
+        </service>
+
+        <service id="gbtux_inertia.twig_extension" class="Gbtux\InertiaBundle\Twig\InertiaExtension" public="false">
+            <tag name="twig.extension" />
+        </service>
+
+    </services>
+</container>
