@@ -31,7 +31,7 @@ class InertiaInstallCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('inertia:install')
@@ -84,7 +84,7 @@ class InertiaInstallCommand extends Command
         if ($this->filesystem->exists(Path::makeAbsolute('templates/base.html.twig', $this->basePath))) {
             $this->filesystem->remove(Path::makeAbsolute('templates/base.html.twig', $this->basePath));
         }
-        /*
+
         $this->filesystem->copy(
             __DIR__.'/../../stubs/templates/app.html.twig',
             Path::makeAbsolute('templates/app.html.twig', $this->basePath)
@@ -118,7 +118,7 @@ class InertiaInstallCommand extends Command
             Path::makeAbsolute('assets/js/pages', $this->basePath)
         );
         $this->filesystem->remove(Path::makeAbsolute('assets/app.js', $this->basePath));
-        /**
+
         $this->filesystem->copy(
             __DIR__.'/../../stubs/assets/app.jsx',
             Path::makeAbsolute('assets/app.jsx', $this->basePath)
@@ -128,29 +128,20 @@ class InertiaInstallCommand extends Command
             Path::makeAbsolute('assets/styles', $this->basePath),
             null,
             ['override' => true]
-        );*/
+        );
 
         // NPM Packages...
-        /**
         $io->info('Installing Node dependencies.');
         if ($this->filesystem->exists(Path::makeAbsolute('pnpm-lock.yaml', $this->basePath))) {
             $this->runCommand('pnpm install', $output);
         } elseif ($this->filesystem->exists(Path::makeAbsolute('yarn.lock', $this->basePath))) {
             $this->runCommand('yarn install', $output);
         } else {
-            if ($this->filesystem->exists(Path::makeAbsolute('.nvmrc', $this->basePath))) {
-                if($nvmBinary) {
-                    $this->runCommand(sprintf('% use', $nvmBinary), $output);
-                }else{
-                    $this->runCommand('nvm use', $output);
-                }
+            $this->runCommand('npm install', $output);
+            $this->runCommand('bin/console fos:js-routing:dump --format=js --target=assets/js/fos_routes.js --callback="export default  "', $output);
+        }
 
-            }
-            //$this->runCommand('npm install', $output);
-            //$this->runCommand('bin/console fos:js-routing:dump --format=js --target=assets/js/fos_routes.js --callback="export default  "', $output);
-        }**/
 
-        /**
         // Controllers...
         $this->ensureDirectoryExists(Path::makeAbsolute('src/Controller', $this->basePath));
         $this->filesystem->mirror(
@@ -159,7 +150,7 @@ class InertiaInstallCommand extends Command
         );
         if ($this->filesystem->exists(Path::makeAbsolute('src/Controller/.gitignore', $this->basePath))) {
             $this->filesystem->remove(Path::makeAbsolute('src/Controller/.gitignore', $this->basePath));
-        }*/
+        }
 
         $io->info('Inertia scaffolding installed successfully.');
 

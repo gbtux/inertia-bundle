@@ -27,7 +27,12 @@ Modifier dans ce même fichier :
 ```
 If needed : ```nvm use 22```
 
-
+dans config/routes/fos_js_routing.yaml, vérifier la configuration telle que:
+```
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.php"
+```
+En Symfony 8, le fichier doit être le php, pas le xml
 
 ## TODO
 

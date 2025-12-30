@@ -1,0 +1,57 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    # On définit ici les correspondances entre les noms d'arguments
+    # et les paramètres du bundle.
+    bind:
+      $previousUrlSessionKey: 'gbtux_inertia.routing_history.previous_url_session_key'
+
+  # --- Services ---
+
+  Gbtux\InertiaBundle\Command\InertiaInstallCommand:
+    arguments:
+      $basePath: '%kernel.project_dir%'
+    # Le tag console.command est ajouté automatiquement via autoconfigure
+
+  Gbtux\InertiaBundle\Service\Inertia:
+    arguments:
+      $container: '@service_container'
+    public: true
+  # --- Alias pour la rétrocompatibilité des IDs (facultatif) ---
+  gbtux_inertia.inertia:
+    alias: Gbtux\InertiaBundle\Service\Inertia
+
+  Gbtux\InertiaBundle\Service\InertiaInterface:
+    alias: Gbtux\InertiaBundle\Service\Inertia
+
+  Gbtux\InertiaBundle\EventListener\InertiaListener:
+    arguments:
+      $debug: '%kernel.debug%'
+    tags:
+      - { name: 'kernel.event_listener', event: 'kernel.request' }
+      - { name: 'kernel.event_listener', event: 'kernel.response' }
+
+  Gbtux\InertiaBundle\EventListener\InertiaSubscriber: ~
+  Gbtux\InertiaBundle\EventListener\StorePreviousUrlInSessionSubscriber: ~
+  Gbtux\InertiaBundle\EventListener\ExceptionHandlerSubscriber: ~
+  Gbtux\InertiaBundle\EventListener\Form\CheckFormValidationStateSubscriber: ~
+
+  Gbtux\InertiaBundle\Service\RoutingHistory: ~
+  Gbtux\InertiaBundle\Contract\RoutingHistoryInterface:
+    alias: Gbtux\InertiaBundle\Service\RoutingHistory
+
+  Gbtux\InertiaBundle\Service\BundleDetector:
+    arguments:
+      $basePath: '%kernel.project_dir%'
+
+  Gbtux\InertiaBundle\Controller\AbstractController:
+    public: true
+    calls:
+      - [setContainer, ['@service_container']]
+    tags:
+      - { name: 'container.service_subscriber' }
+
+  Gbtux\InertiaBundle\Twig\InertiaExtension: ~
+

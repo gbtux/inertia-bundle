@@ -1,0 +1,24 @@
+body {
+    background-color: #f8fafc;
+}
+
+nav a.active {
+    font-weight: bold;
+    color: lightcoral;
+}
+
+.form-error {
+    color: red;
+    font-style: italic;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.alert {
+    color: white;
+    padding: 10px;
+}
+
+.alert.alert-success {
+    background-color: green;
+}
