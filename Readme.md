@@ -74,6 +74,39 @@ npm run dev
 
 ---
 
+## Configuration de ShadCN
+
+Le bundle peut directement configurer tout l'outillage pour utiliser Shadcn.
+Pour cela, **uniquement après avoir initialiser le bundle avec la commande inertia:install**:
+
+```bash
+php bin/console inertia:configure-shadcn
+```
+
+Vous pouvez maintenant installer n'importe quel composant dans votre projet comme par exemple un bouton:
+
+```bash
+npx shadcn@latest add button
+```
+
+Puis l'utiliser:
+
+```jsx
+import { Button } from "@/components/ui/button"
+
+export default function HomePage({ name }) {
+    return (
+        <>
+            <Head title="Home" />
+            <Button>Click me</Button>
+            <h1>Hello, {name}!</h1>
+        </>
+    );
+}
+```
+
+---
+
 ## 💡 Utilisation
 
 ### Dans votre Contrôleur
@@ -139,7 +172,7 @@ const flash = usePage().props.flash;
 * **Zero-config** : La commande `inertia:install` s'occupe de tout.
 * **Routing** : Intégration native avec `FOSJsRoutingBundle` pour utiliser vos routes Symfony en JS.
 * **Vite** : Configuration moderne optimisée pour les performances.
-
+* **Shadcn** : Utilisez la bibliothèque de composants la plus utilisée du monde React
 ---
 
 ## 🤝 Contribution
