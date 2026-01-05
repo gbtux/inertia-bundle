@@ -33,6 +33,11 @@ services:
       - { name: 'kernel.event_listener', event: 'kernel.request' }
       - { name: 'kernel.event_listener', event: 'kernel.response' }
 
+  Gbtux\InertiaBundle\EventListener\FlashMessagesListener:
+    arguments: [ '@request_stack' ]
+    tags:
+      - { name: kernel.event_listener, event: 'Gbtux\InertiaBundle\Event\InertiaShareEvent', method: onInertiaShare }
+
   Gbtux\InertiaBundle\EventListener\InertiaSubscriber: ~
   Gbtux\InertiaBundle\EventListener\StorePreviousUrlInSessionSubscriber: ~
   Gbtux\InertiaBundle\EventListener\ExceptionHandlerSubscriber: ~

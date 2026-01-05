@@ -2,6 +2,7 @@
 
 namespace Gbtux\InertiaBundle\Service;
 
+use Gbtux\InertiaBundle\Event\InertiaShareEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -11,6 +12,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Environment;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Inertia implements InertiaInterface
 {
@@ -48,16 +50,19 @@ class Inertia implements InertiaInterface
     /** @var ContainerInterface */
     protected $container;
 
+    protected $dispatcher;
+
     /**
      * Inertia constructor.
      */
-    public function __construct(string $rootView, Environment $engine, RequestStack $requestStack, ContainerInterface $container, ?SerializerInterface $serializer = null)
+    public function __construct(string $rootView, Environment $engine, RequestStack $requestStack, ContainerInterface $container, EventDispatcherInterface $dispatcher, ?SerializerInterface $serializer = null)
     {
         $this->engine = $engine;
         $this->rootView = $rootView;
         $this->requestStack = $requestStack;
         $this->serializer = $serializer;
         $this->container = $container;
+        $this->dispatcher = $dispatcher;
     }
 
     public function share(string $key, $value = null): void
@@ -144,6 +149,10 @@ class Inertia implements InertiaInterface
 
     public function render($component, $props = [], $viewData = [], $context = [], $url = null): Response
     {
+        $event = new InertiaShareEvent($this->sharedProps);
+        $this->dispatcher->dispatch($event);
+        $this->sharedProps = $event->getShares();
+
         $context = array_merge($this->sharedContext, $context);
         $viewData = array_merge($this->sharedViewData, $viewData);
         $props = array_merge($this->sharedProps, $props);

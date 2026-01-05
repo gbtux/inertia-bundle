@@ -157,13 +157,59 @@ export default function AboutPage() {
 
 ## 🔗 Shared Data (Données Partagées)
 
-Vous pouvez partager des données automatiquement avec tous vos composants (comme l'utilisateur connecté ou les messages flash) via un EventListener ou en surchargeant la configuration. Par défaut, le bundle gère les messages flash de Symfony :
+Vous pouvez partager des données automatiquement avec tous vos composants (comme l'utilisateur connecté ou les messages flash) via un EventListener ou en surchargeant la configuration. 
+Par défaut, le bundle gère les messages flash de Symfony :
 
 ```js
 // Dans n'importe quel composant, accédez aux flash messages
 const flash = usePage().props.flash;
 
 ```
+
+Si vous voulez gérez dans votre application d'autres données partagées sur toutes les pages, voici un exemple pour récupérer l'utilisateur connecté:
+
+Créez un EventListener tel que:
+
+````
+use Gbtux\InertiaBundle\Event\InertiaShareEvent;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener(event: InertiaShareEvent::class)]
+class InertiaShareListener
+{
+    public function __construct(private Security $security) {}
+
+    public function __invoke(InertiaShareEvent $event): void
+    {
+        // Partager l'utilisateur connecté
+        $event->share('auth', [
+            'user' => $this->security->getUser() ? [
+                'username' => $this->security->getUser()->getUserIdentifier(),
+                'email' => $this->security->getUser()->getEmail(),
+                'name' => $this->security->getUser()->getName(),
+            ] : null,
+        ]);
+
+        // Partager les variables d'environnement (ex: nom de l'app)
+        //$event->share('app_name', 'Mon Super Projet');
+    }
+}
+````
+En React, vous pouvez récupérer les données ainsi:
+
+````
+interface SharedData {
+    auth: Auth;
+}
+.....
+const { auth } = usePage<SharedData>().props;
+......
+<UserInfo user={auth.user} />
+
+et dans UserInfo:
+<AvatarImage src={user.avatar} alt={user.name} />
+````
 
 ---
 
