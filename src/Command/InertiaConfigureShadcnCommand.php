@@ -46,6 +46,10 @@ class InertiaConfigureShadcnCommand extends Command
             __DIR__.'/../../stubs/shadcn/tsconfig.json',
             Path::makeAbsolute('tsconfig.json', $this->basePath)
         );
+        $this->filesystem->copy(
+            __DIR__.'/../../stubs/shadcn/components.json',
+            Path::makeAbsolute('components.json', $this->basePath)
+        );
 
         $this->updateNodePackages(function ($packages) {
             return [
