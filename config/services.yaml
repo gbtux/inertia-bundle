@@ -14,6 +14,9 @@ services:
     arguments:
       $basePath: '%kernel.project_dir%'
     # Le tag console.command est ajouté automatiquement via autoconfigure
+  Gbtux\InertiaBundle\Command\InertiaConfigureShadcnCommand:
+    arguments:
+      $basePath: '%kernel.project_dir%'
 
   Gbtux\InertiaBundle\Service\Inertia:
     arguments:
